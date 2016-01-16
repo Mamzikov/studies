@@ -9,6 +9,8 @@ error_reporting(-1);
 mb_internal_encoding('utf-8');
 
 
+
+
 function charInAction ($num, $num2, $char) {
 
     switch ($char) {
@@ -28,10 +30,6 @@ function charInAction ($num, $num2, $char) {
             $result = null;
     }
 
-//    if ($char == '+') $result = $num + $num2;
-//    if ($char == '-') $result = $num - $num2;
-//    if ($char == '*') $result = $num * $num2;
-//    if ($char == '/') $result = $num / $num2;
 
     return $result;
 }
@@ -39,24 +37,38 @@ function charInAction ($num, $num2, $char) {
 
 function calculator($inputText) {
 
+    $inputLength = mb_strlen($inputText);
+    $number = '';
+    $result = null;
+    $operator = '';
 
-    $numbers = preg_split('/[-\\+*=\\/]/i', str_replace(',', '.', $inputText), 0, PREG_SPLIT_NO_EMPTY);
-    $operators = preg_split('/[0-9^,^\\.]/i', $inputText, 0, PREG_SPLIT_NO_EMPTY);
 
-   $result = charInAction($numbers[0], $numbers[0+1], $operators[0]);
+    for ($i=0; $i<$inputLength; $i++) {
 
-    for ($i=1; $i<count($operators)-1; $i++) {
-        if (is_null($result = charInAction($result, $numbers[$i+1], $operators[$i]))) {
-            echo 'Ошибка!'; die();
+        $char = mb_substr($inputText, $i, 1);
+        if (($char != '+') and ($char != '-') and ($char != '*') and ($char != '/') and ($char != '=')) {
+            $number .=  str_replace(',','.',$char);
+        } else {
+            if (is_null($result)) {
+                $result = $number;
+                $number = '';
+            }
+            else {
+//                echo 'calculate '.$result.' '.$operator.' '.$number.' = ';
+                $result = charInAction($result, $number, $operator);
+                $number = '';
+            }
+            $operator = $char;
         }
+
 
     }
 
     return round($result, 2);
-
 }
 
-
+//echo calculator('2.25+2,5=');
+//exit;
 
 function test($inputString, $validResult) {
     if ((calculator($inputString) == $validResult)) {
@@ -73,3 +85,4 @@ test ('2000,5*2/2=', '2000.5');
 test ('2.25*2=', '4.5');
 test ('2.251234*2=', '4.5');
 test ('2.25987*2=', '4.52');
+test ('2.25+2,5=', '4.75');
