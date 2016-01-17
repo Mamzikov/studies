@@ -4,7 +4,7 @@
  * @author runcore
  * @uses morph(...)
  */
-
+include 'main_coiffured.php';
 function num2str($num) {
     $nul='ноль';
     $ten=array(
@@ -24,11 +24,9 @@ function num2str($num) {
         array ('квадриллион','квадриллиона','квадриллионов', 0),
     );
     //
-    echo '$num: '.$num.PHP_EOL;
+
     list($rub,$kop) = explode('.',sprintf("%021.2f", floatval($num))); // TODO error function 'sprintf'
 
-    echo '$rub: '.$rub.PHP_EOL;
-    echo '$kop: '.$kop.PHP_EOL;
     $out = array();
     if (intval($rub)>0) {
         foreach(str_split($rub,3) as $uk=>$v) { // by 3 symbols
@@ -49,7 +47,6 @@ function num2str($num) {
     }
     else $out[] = $nul;
     $out[] = morph(intval($rub), $unit[1][0],$unit[1][1],$unit[1][2]); // rub
-    echo 'intval($rub): '.intval($rub).PHP_EOL.'$rub: '.$rub.PHP_EOL; // TODO function 'intval'
     $out[] = $kop.' '.morph($kop,$unit[0][0],$unit[0][1],$unit[0][2]); // kop
     return trim(preg_replace('/ {2,}/', ' ', join(' ',$out)));
 
@@ -68,7 +65,7 @@ function morph($n, $f1, $f2, $f5) {
     return $f5;
 }
 
-function smallTest($num, $validResult) {
+/*function smallTest($num, $validResult) {
     $textNum = num2str($num);
     if ($textNum == $validResult ) {
         echo 'Ошибок нет! Цифра ('.$num.' рубля): '.$textNum.PHP_EOL;
@@ -97,8 +94,26 @@ function test() {
     smallTest('0,1149865111','ноль рублей 11 копеек');
     smallTest('0','ноль рублей 00 копеек');
 }
-
+*/
 //test();
 
-echo num2str(135156311331).PHP_EOL;
-////echo floatval('5644.822646sdfg');
+
+function comparisonOfWorkingTime()
+{
+    $t = -microtime(true);
+    for ($q = 0; $q < 100000; ++$q) {
+        $res = num2str(784);
+    }
+    $t += microtime(true);
+    echo $t, PHP_EOL;
+
+    $t = -microtime(true);
+    for ($q = 0; $q < 100000; ++$q) {
+        $res = smallNumberToText('784');
+    }
+    $t += microtime(true);
+    echo $t, PHP_EOL;
+}
+
+comparisonOfWorkingTime();
+exit;

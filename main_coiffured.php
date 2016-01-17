@@ -99,16 +99,15 @@ function bigNumberToText($number, $us_format = false) {
     );
 
 
-//    $number .='.0';
     $template = ($us_format)?'/[\\._\\/:\'-]/i':'/[\\.,_\\/:\'-]/i';
-    $partNumbers = preg_split($template, $number); //TODO! Fix this - Done
+    $partNumbers = preg_split($template, $number);
     $str_number = preg_replace('/[^0-9]/i', '',$partNumbers[0]);
 
     $result = '';
 
     $numberOfRanks = (count($nameRanks)+1)*3;
 
-    if (strlen($str_number) > $numberOfRanks) { //TODO! Fix this - Done
+    if (strlen($str_number) > $numberOfRanks) {
         $result = 'Для цифр ('.substr($str_number, 0, strlen($str_number)-$numberOfRanks).')'.substr($str_number, -$numberOfRanks).' не существует названий разрядов';
     } else {
 
