@@ -101,14 +101,14 @@ function test() {
 function comparisonOfWorkingTime()
 {
     $t = -microtime(true);
-    for ($q = 0; $q < 100000; ++$q) {
+    for ($q = 0; $q < 1000000; ++$q) {
         $res = num2str(784);
     }
     $t += microtime(true);
     echo $t, PHP_EOL;
 
     $t = -microtime(true);
-    for ($q = 0; $q < 100000; ++$q) {
+    for ($q = 0; $q < 1000000; ++$q) {
         $res = smallNumberToText('784');
     }
     $t += microtime(true);

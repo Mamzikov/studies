@@ -38,5 +38,5 @@ function circle ($phrase, $fromAngle, $radius, $height, $centerX, $centerY) {
 }
 
 echo circle ('абвгдеёжзийклмнопрстуфхцчшщьъэюя', 0,13, 30, 40, 15);
-echo circle ('абвгде', 0,5, 30, 40, 15);
+echo circle ('абвгде', 0,13, 30, 40, 15);
 echo circle ('абвгдеёжзийклмнопрстуфхцчшщьъэюяабвгдеёжзийклмнопрстуфхцчшщьъэюя', 90,10, 30, 40, 15);
