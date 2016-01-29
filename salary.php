@@ -6,6 +6,7 @@
  * Time: 15:45
  */
 
+
 error_reporting(-1);
 mb_internal_encoding('utf-8');
 
@@ -95,26 +96,31 @@ class Employees {
 
         return $res;
     }
-    private function padRigth ($string, $length) { // Создает отступ строки $string справа до длины $length
+
+    /**
+     * @param string $string Исходная строка
+     * @param int $length Необходимая длина строки
+     * @param string $side С какой стороны необходимы пробелы
+     * @return string Строка дополненная пробелами до необходимой длины
+     */
+    public function indent ($string, $length, $side) {
         if (mb_strlen($string)>=$length)
-            die('Ошибка! Увеличте ширину столбца. Минимальная ширина 1-го столбца: '.(mb_strlen($string)+1).PHP_EOL);
-        do {
-            $string.=' ';
+            die('Ошибка! Ширина столбца меньше кол-ва символов строки. Минимальная ширина столбца: '.(mb_strlen($string)+1).PHP_EOL);
+        $numSpaces = $length-mb_strlen($string);
+        $indent = str_repeat(' ', $numSpaces);
+
+        if ($side == 'left')
+            $string = $indent.$string;
+        if ($side == 'rigth')
+            $string = $string.$indent;
+        if ($side == 'center') {
+            $spaces = $numSpaces/2;
+            $string = str_repeat(' ', ceil($spaces)).$string.str_repeat(' ', floor($spaces));
         }
-        while (mb_strlen($string) != $length);
+
         return $string;
     }
-    private function padLeft ($string, $length) { // Создает отступ строки $string слева до длины $length
-        if (mb_strlen($string)>=$length)
-            die('Ошибка! Увеличте ширину столбца. Минимальная ширина 2-го и следующих столбцов: '.(mb_strlen($string)+1).PHP_EOL);
-        $insert='';
-        do {
-            $insert.=' ';
-        }
-        while (mb_strlen($insert)+mb_strlen($string) != $length);
-        $string = $insert.$string;
-        return $string;
-    }
+
 
     /**
      * @return array Таблица в массиве
@@ -136,19 +142,29 @@ class Employees {
 
 
     /**
-     * @return string
+     * @return string Отформатированная таблица
      */
     public function getConsoleTable() {
         $res = '';
 
-        $col1 = 13; //ширина столбцов
-        $colNext = 9;
-
         $table = $this->getTable();
+        $column= array();
+        $col = null;
+
+        for ($y=0; $y<count($table[0]); $y++) { // Ширина столбцов
+//         foreach ($y=0; $y<count($table[0]); $y++) { // Ширина столбцов
+            for ( $i = 0; $i < count($table); $i++ ) {
+                if ( (is_null($col)) or (mb_strlen($table[$i][$y]) > $col) ) {
+                    $col = mb_strlen($table[$i][$y]);
+                }
+            }
+            $column[]=$col+1;
+            $col = null;
+        }
 
         foreach ($table as $string) {
             foreach ($string as $key=>$word) {
-                $res.= ($key==0)? $this->padRigth($word, $col1): $this->padLeft($word, $colNext);
+                $res.= ($key==0)? $this->indent($word, $column[$key], 'rigth'): $this->indent($word, $column[$key], 'left');
             }
             $res.=PHP_EOL;
         }
@@ -170,7 +186,28 @@ $tmp = new Employee('Сидоров Сидр', 9);
 $tmp->setHours(array(40,50,10,50));
 $employess->add($tmp);
 
+$tmp = new Employee('Васильев Василий', 10);
+$tmp->setHours(array(40,40,10,70));
+$employess->add($tmp);
+
 
 echo ($employess->getConsoleTable());
 
+function myAssertArray($a, $b) {
+    if (serialize($a) == serialize($b))
+        echo 'OK'.PHP_EOL;
+    else
+        echo 'ERROR: '.$a.' Ожидается: '.$b.PHP_EOL;
+}
 
+
+
+function testIndent() {
+    $string = new Employees();
+    myAssertArray($string->indent('строка', 10, 'left'), '    строка');
+    myAssertArray($string->indent('строка', 10, 'rigth'), 'строка    ');
+    myAssertArray($string->indent('строка', 10, 'center'), '  строка  ');
+    myAssertArray($string->indent('строк', 10, 'center'), '   строк  ');
+    myAssertArray($string->indent('10', 3, 'center'), ' 10');
+}
+//testIndent();
