@@ -58,6 +58,9 @@ class Employee {
 
 class Employees {
     private $items = array();
+    const LEFT='left';
+    const RIGHT='right';
+    const CENTER= 'center';
 
     /**
      * @param Employee $employee
@@ -108,14 +111,17 @@ class Employees {
             die('Ошибка! Ширина столбца меньше кол-ва символов строки. Минимальная ширина столбца: '.(mb_strlen($string)+1).PHP_EOL);
         $numSpaces = $length-mb_strlen($string);
         $indent = str_repeat(' ', $numSpaces);
-
-        if ($side == 'left')
-            $string = $indent.$string;
-        if ($side == 'rigth')
-            $string = $string.$indent;
-        if ($side == 'center') {
-            $spaces = $numSpaces/2;
-            $string = str_repeat(' ', ceil($spaces)).$string.str_repeat(' ', floor($spaces));
+        switch ($side) {
+            case 'left':
+                $string = $indent.$string;
+                break;
+            case 'right':
+                $string = $string.$indent;
+                break;
+            case 'center':
+                $spaces = $numSpaces/2;
+                $string = str_repeat(' ', ceil($spaces)).$string.str_repeat(' ', floor($spaces));
+                break;
         }
 
         return $string;
@@ -152,7 +158,6 @@ class Employees {
         $col = null;
 
         for ($y=0; $y<count($table[0]); $y++) { // Ширина столбцов
-//         foreach ($y=0; $y<count($table[0]); $y++) { // Ширина столбцов
             for ( $i = 0; $i < count($table); $i++ ) {
                 if ( (is_null($col)) or (mb_strlen($table[$i][$y]) > $col) ) {
                     $col = mb_strlen($table[$i][$y]);
@@ -164,7 +169,7 @@ class Employees {
 
         foreach ($table as $string) {
             foreach ($string as $key=>$word) {
-                $res.= ($key==0)? $this->indent($word, $column[$key], 'rigth'): $this->indent($word, $column[$key], 'left');
+                $res.= ($key==0)? $this->indent($word, $column[$key], self::RIGHT): $this->indent($word, $column[$key], self::CENTER);
             }
             $res.=PHP_EOL;
         }
@@ -191,13 +196,13 @@ $tmp->setHours(array(40,40,10,70));
 $employess->add($tmp);
 
 
-echo ($employess->getConsoleTable());
+//echo ($employess->getConsoleTable());
 
 function myAssertArray($a, $b) {
     if (serialize($a) == serialize($b))
         echo 'OK'.PHP_EOL;
     else
-        echo 'ERROR: '.$a.' Ожидается: '.$b.PHP_EOL;
+        echo 'ERROR! Результат выполнения: '.$a.' Ожидается: '.$b.PHP_EOL;
 }
 
 
